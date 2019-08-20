@@ -1,0 +1,5 @@
+#!/bin/sh
+sleep 10s
+mount -t cifs "//192.168.8.240/BugMazePit" /BugMazePit -o vers=3.0,username=root,password=111,iocharset=utf8,file_mode=0777,dir_mode=0777 &
+mount -t cifs "//192.168.8.240/RDisk" /RDisk -o vers=3.0,username=root,password=111,iocharset=utf8,file_mode=0777,dir_mode=0777 &
+sudo sshfs root@networkbreak.net:/ /mnt -p 2004 -o IdentityFile=/home/yzarc/.ssh/id_ed25519,uid=1000,gid=1000

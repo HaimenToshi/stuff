@@ -1,0 +1,135 @@
+lxqt-base/lxqt-panel networkmonitor pulseaudio statusnotifier
+lxqt-base/lxqt-meta powermanagement admin
+sys-apps/util-linux static-libs
+app-admin/sudo -sendmail -ldap
+>=kde-apps/kio-extras-19.04.2 samba
+>=x11-libs/libxcb-1.13.1 xkb
+>=x11-libs/libxkbcommon-0.8.4 X
+>=dev-libs/libpcre2-10.33 pcre16
+>=app-text/xmlto-0.0.28-r1 text
+>=kde-frameworks/kwindowsystem-5.59.0 X
+>=media-video/vlc-3.0.7.1 X libplacebo mad modplug mpeg musepack postproc sid theora vorbis vpx a52 aom aribsub bidi dav1d dts dvbpsi faad fluidsynth gme libass libcaca dbus vorbis ogg flac ape minizip matroska opus x265 pulseaudio
+>=sys-libs/zlib-1.2.11-r2 minizip
+>=sys-apps/systemd-242-r6 policykit gnuefi cgroup-hybrid
+>=dev-lang/python-2.7.16:2.7 sqlite
+media-libs/libcanberra alsa
+>=x11-libs/cairo-1.16.0-r3 X
+>=dev-qt/qtcore-5.12.4 icu
+>=media-plugins/alsa-plugins-1.1.9-r1 pulseaudio
+>=dev-qt/qtgui-5.12.4 jpeg dbus egl
+>=sys-apps/dbus-1.12.16 user-session
+>=media-libs/mesa-19.1.2 wayland
+>=media-video/ffmpeg-4.1.3 gme modplug opus speex wavpack
+>=www-client/w3m-0.5.3_p20190105 imlib
+>=media-libs/freetype-2.10.1 harfbuzz
+>=kde-apps/gwenview-19.04.2:5 raw
+>=kde-apps/ark-19.04.2:5  bzip2 -handbook lzma zip
+>=dev-db/sqlite-3.28.0 secure-delete
+>=dev-lang/python-3.6.9:3.6 sqlite
+>=x11-libs/gtk+-3.24.10 wayland
+media-libs/libvpx postproc
+www-client/firefox hwaccel custom-cflags custom-optimization wayland pulseaudio
+media-libs/libsdl2 gles
+app-emulation/qemu usbredir virgl spice
+>=net-misc/spice-gtk-0.37-r2 usbredir
+>=sys-libs/ncurses-6.1_p20190609 -gpm
+>=media-libs/clutter-1.10 egl
+media-libs/cogl gles2
+mate-base/mate -extras -help themes
+>=media-libs/libmatemixer-1.22.0 pulseaudio
+>=app-crypt/pinentry-1.1.0-r3 gnome-keyring
+>=x11-libs/xapps-1.4.2 introspection
+games-strategy/0ad editor
+
+#PCSX2
+>=app-arch/bzip2-1.0.8 abi_x86_32
+>=app-arch/xz-utils-5.2.4-r3 abi_x86_32
+>=dev-libs/libaio-0.3.112 abi_x86_32
+>=media-libs/alsa-lib-1.1.9 abi_x86_32
+>=media-libs/libpng-1.6.37 abi_x86_32
+>=media-libs/libsdl-1.2.15-r9 abi_x86_32
+>=media-libs/libsoundtouch-2.1.2 abi_x86_32
+>=media-libs/portaudio-19.06.00-r2 abi_x86_32
+>=sys-libs/zlib-1.2.11-r2 abi_x86_32
+>=x11-libs/gtk+-2.24.32-r1:2 abi_x86_32
+>=x11-libs/libICE-1.0.10 abi_x86_32
+>=x11-libs/libX11-1.6.8 abi_x86_32
+>=x11-libs/libXext-1.3.4 abi_x86_32
+>=x11-libs/wxGTK-3.0.4-r2:3.0 abi_x86_32
+>=dev-libs/expat-2.2.7 abi_x86_32
+>=media-libs/libsdl2-2.0.10 abi_x86_32
+>=dev-libs/glib-2.60.6 abi_x86_32
+>=x11-libs/gdk-pixbuf-2.38.1 abi_x86_32
+>=x11-libs/libSM-1.2.3 abi_x86_32
+>=x11-libs/libXxf86vm-1.1.4-r1 abi_x86_32
+>=x11-libs/pango-1.42.4-r2 abi_x86_32
+>=x11-libs/libnotify-0.7.8 abi_x86_32
+>=media-libs/tiff-4.0.10-r1 abi_x86_32
+media-libs/harfbuzz abi_x86_32
+>=media-libs/fontconfig-2.13.1-r2 abi_x86_32
+media-libs/freetype abi_x86_32
+>=x11-libs/cairo-1.16.0-r3 abi_x86_32
+>=dev-libs/fribidi-1.0.5 abi_x86_32
+>=x11-libs/libXrender-0.9.10-r1 abi_x86_32
+>=x11-libs/libXft-2.3.3 abi_x86_32
+>=dev-libs/lzo-2.10 abi_x86_32
+>=sys-libs/binutils-libs-2.32-r1 abi_x86_32
+>=x11-libs/pixman-0.38.4 abi_x86_32
+>=media-libs/mesa-19.1.4 abi_x86_32
+>=x11-libs/libxcb-1.13.1 abi_x86_32
+>=dev-libs/libpthread-stubs-0.4-r1 abi_x86_32
+>=x11-libs/libXau-1.0.9 abi_x86_32
+>=x11-libs/libXdmcp-1.1.3 abi_x86_32
+>=x11-libs/libxshmfence-1.3-r1 abi_x86_32
+>=x11-libs/libXdamage-1.1.5 abi_x86_32
+>=x11-libs/libXfixes-5.0.3-r1 abi_x86_32
+>=dev-libs/wayland-1.17.0 abi_x86_32
+>=x11-libs/libdrm-2.4.99 abi_x86_32
+>=x11-libs/libXrandr-1.5.2 abi_x86_32
+>=sys-apps/util-linux-2.34-r2 abi_x86_32
+>=media-gfx/graphite2-1.3.13 abi_x86_32
+>=dev-libs/icu-64.2 abi_x86_32
+>=dev-libs/libpcre-8.43 abi_x86_32
+>=sys-apps/dbus-1.12.16 abi_x86_32
+>=x11-libs/libxkbcommon-0.8.4 abi_x86_32
+>=x11-libs/libXcursor-1.2.0 abi_x86_32
+>=x11-libs/libXi-1.7.10 abi_x86_32
+>=dev-libs/atk-2.30.0 abi_x86_32
+>=net-print/cups-2.2.12 abi_x86_32
+>=x11-libs/libXcomposite-0.4.5 abi_x86_32
+>=gnome-base/librsvg-2.40.20 abi_x86_32
+>=sys-devel/gettext-0.20.1 abi_x86_32
+>=dev-libs/libxml2-2.9.9-r1 abi_x86_32
+>=dev-libs/libcroco-0.6.13 abi_x86_32
+>=net-libs/gnutls-3.6.7 abi_x86_32
+>=dev-libs/libtasn1-4.13 abi_x86_32
+>=dev-libs/libunistring-0.9.10 abi_x86_32
+>=dev-libs/nettle-3.5.1 abi_x86_32
+>=dev-libs/gmp-6.1.2-r1 abi_x86_32
+>=net-dns/libidn2-2.2.0 abi_x86_32
+>=media-libs/audiofile-0.3.6-r3 abi_x86_32
+>=media-libs/flac-1.3.3 abi_x86_32
+>=media-libs/libogg-1.3.3 abi_x86_32
+>=virtual/glu-9.0-r2 abi_x86_32
+>=media-libs/glu-9.0.1 abi_x86_32
+>=virtual/opengl-7.0-r2 abi_x86_32
+>=virtual/pkgconfig-1 abi_x86_32
+>=dev-util/pkgconf-1.6.3 abi_x86_32
+>=virtual/libintl-0-r2 abi_x86_32
+>=virtual/libiconv-0-r2 abi_x86_32
+>=virtual/libudev-232 abi_x86_32
+>=sys-apps/systemd-243_rc1-r2 abi_x86_32
+>=sys-libs/libcap-2.27 abi_x86_32
+>=dev-libs/libgcrypt-1.8.4 abi_x86_32
+>=app-arch/lz4-1.9.1 abi_x86_32
+>=dev-libs/libgpg-error-1.36 abi_x86_32
+>=sys-apps/attr-2.4.48-r3 abi_x86_32
+>=virtual/pam-0-r1 abi_x86_32
+>=sys-libs/pam-1.3.1-r1 abi_x86_32
+>=sys-libs/db-6.0.35-r1 abi_x86_32
+>=sys-libs/cracklib-2.9.7 abi_x86_32
+>=virtual/libffi-3.3_rc0 abi_x86_32
+>=dev-libs/libffi-3.3_rc0 abi_x86_32
+>=virtual/jpeg-0-r3 abi_x86_32
+>=media-libs/libjpeg-turbo-2.0.2 abi_x86_32
+>=x11-base/xcb-proto-1.13 abi_x86_32

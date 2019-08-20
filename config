@@ -1,0 +1,22 @@
+Host *
+    IdentityFile ~/.ssh/id_ed25519
+    Port 2004
+    User root
+    StrictHostKeyChecking no
+
+Host NetworkBreak
+    HostName 192.168.8.240
+
+Host VPS
+    HostName networkbreak.net
+
+Host Builder
+    HostName 192.168.8.239
+
+
+Host MN
+    HostName 45.77.141.48
+
+
+Host Mail
+    Hostname mail.networkbreak.net
