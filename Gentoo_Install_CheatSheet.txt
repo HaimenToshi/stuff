@@ -131,7 +131,6 @@ make -j10
 make modules_install
 make install
 dracut --kver $(ls -ls /usr/src/linux | cut -d'-' -f3-)
-#dracut --kver $(find /lib/modules/ -type d | sort -k1,1nr | tail -1 | sed 's/[^.0-9]*//g')
 
 cd /
 emerge dhcpcd bash-completion grub doas
