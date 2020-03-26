@@ -1,0 +1,172 @@
+cgdisk /dev/sda
+mkfs.vfat -F 32 -n EFI /dev/sda1
+mkfs.ext4 -L Root /dev/sda2
+mkfs.ext4 -L Home /dev/sda3
+mkdir /mnt/gentoo
+
+mount /dev/sda2 /mnt/gentoo
+mkdir /mnt/gentoo/boot
+mkdir /mnt/gentoo/home
+mount /dev/sda1 /mnt/gentoo/boot
+mount /dev/sda3 /mnt/gentoo/home
+
+cd /mnt/gentoo/
+wget --recursive --no-parent https://linux.rz.ruhr-uni-bochum.de/download/gentoo-mirror/releases/amd64/autobuilds/current-stage3-amd64-systemd/ -e robots=off -R "index.html*" -R "*.CONTENTS" -R "*.asc" -R "*.DIGESTS" -nH --cut-dirs=10
+tar xpf stage3*.tar.* --xattrs-include='*.*' --numeric-owner
+
+
+mount --types proc /proc /mnt/gentoo/proc
+mount --rbind /sys /mnt/gentoo/sys
+mount --make-rslave /mnt/gentoo/sys
+mount --rbind /dev /mnt/gentoo/dev
+mount --make-rslave /mnt/gentoo/dev
+test -L /dev/shm && rm /dev/shm && mkdir /dev/shm
+mount --types tmpfs --options nosuid,nodev,noexec shm /dev/shm
+chmod 1777 /dev/shm
+
+genfstab -L -p /mnt/gentoo > /mnt/gentoo/etc/fstab
+
+chroot /mnt/gentoo /bin/bash
+source /etc/profile
+export PS1="(chroot) ${PS1}"
+
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
+rm -rf /etc/portage/package.use
+
+echo 'COMMON_FLAGS="-O2 -march=native -mtune=native -pipe"
+CFLAGS="${COMMON_FLAGS}"
+CXXFLAGS="${COMMON_FLAGS}"
+FCFLAGS="${COMMON_FLAGS}"
+FFLAGS="${COMMON_FLAGS}"
+LDFLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
+
+PORTDIR="/usr/portage"
+DISTDIR="/usr/portage/distfiles"
+PKGDIR="/usr/portage/packages"
+
+LC_MESSAGES=C
+L10N="ar"
+LINGUAS="ar"
+USE="custom-cflags custom-optimization systemd udev bash-completion X wayland -llvm -man -docs -doc -handbook"
+MAKEOPTS="-j10"
+EMERGE_DEFAULT_OPTS="--ask --alert --verbose --jobs 6 --quiet-build"
+ACCEPT_KEYWORDS="~amd64"
+VIDEO_CARDS="nouveau"
+INPUT_DEVICES="libinput"
+CPU_FLAGS_X86="aes avx avx2 f16c fma3 mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
+ABI_X86="64 32"' > /etc/portage/make.conf
+
+echo 'sys-apps/util-linux static-libs
+app-admin/sudo -sendmail -ldap
+>=kde-apps/kio-extras-19.04.2 samba
+>=net-fs/samba-4.12.0 client
+>=x11-libs/libxcb-1.13.1 xkb
+>=x11-libs/libxkbcommon-0.8.4 X
+>=dev-libs/libpcre2-10.33 pcre16
+>=app-text/xmlto-0.0.28-r1 text
+>=kde-frameworks/kwindowsystem-5.59.0 X
+>=media-video/vlc-3.0.7.1 X libplacebo mad modplug mpeg musepack postproc sid theora vorbis vpx a52 aom aribsub bidi dav1d dts dvbpsi faad fluidsynth gme libass libcaca dbus vorbis ogg flac ape minizip matroska opus x265 pulseaudio
+>=sys-libs/zlib-1.2.11-r2 minizip
+>=sys-apps/systemd-242-r6 policykit gnuefi cgroup-hybrid
+>=dev-lang/python-2.7.16:2.7 sqlite
+media-libs/libcanberra alsa
+>=x11-libs/cairo-1.16.0-r3 X
+>=dev-qt/qtcore-5.12.4 icu
+>=media-plugins/alsa-plugins-1.1.9-r1 pulseaudio
+>=dev-qt/qtgui-5.14.0 jpeg dbus egl
+>=dev-qt/qtgui-5.14.0 jpeg dbus
+>=sys-apps/dbus-1.12.16 user-session
+>=x11-misc/picom-7.5-r1 opengl
+>=media-video/ffmpeg-4.1.3 gme modplug opus speex wavpack
+>=www-client/w3m-0.5.3_p20190105 imlib
+>=media-libs/freetype-2.10.1 -harfbuzz
+>=kde-apps/gwenview-19.04.2:5 raw
+>=kde-apps/ark-19.04.2:5  bzip2 -handbook lzma zip
+>=dev-db/sqlite-3.28.0 secure-delete
+>=dev-lang/python-3.6.9:3.6 sqlite
+>=x11-libs/gtk+-3.24.10 wayland
+media-libs/libvpx postproc
+www-client/firefox hwaccel custom-cflags custom-optimization wayland pulseaudio
+media-libs/libsdl2 gles
+app-emulation/qemu usbredir virgl spice
+>=net-misc/spice-gtk-0.37-r2 usbredir
+>=sys-libs/ncurses-6.1_p20190609 -gpm
+>=media-libs/clutter-1.10 egl
+media-libs/cogl gles2
+>=media-libs/libmatemixer-1.22.0 pulseaudio
+>=app-crypt/pinentry-1.1.0-r3 -gnome-keyring
+>=x11-libs/xapps-1.4.2 introspection
+>=kde-plasma/powerdevil-5.18.3 -wireless
+>=media-libs/libpng-1.6.37 apng' > /etc/portage/package.use
+
+echo '*/*  *' > /etc/portage/package.license
+
+emerge-webrsync
+emerge --sync --quiet --ask=n
+emerge --verbose --update --deep --newuse @world
+
+echo "Asia/Riyadh" > /etc/timezone
+emerge --config sys-libs/timezone-data --ask=n
+echo 'en_US.UTF-8 UTF-8
+ar_SA.UTF-8 UTF-8' > /etc/locale.gen
+locale-gen
+eselect locale list
+eselect locale set XXXXX
+
+env-update && source /etc/profile && export PS1="(chroot) $PS1"
+
+emerge vanilla-sources dracut
+cd /usr/src/linux
+make menuconfig
+#PLEASE DON"T CHANGE ANYTHING OTHER THAN ACTIVATING YOUR STORAGE,VIDEO,SOUND,NETOWRK DRIVERS (NVME,VIRTIO..ETC) + FILESYSTEMS (EXT4, XFS..ETC) OTHERWISE YOUR KERNEL WILL NOT BOOT
+sed -i 's/.*CONFIG_USER_NS.*/CONFIG_USER_NS=y/' .config
+sed -i 's/.*CONFIG_DEBUG_STACK_USAGE.*/# CONFIG_DEBUG_STACK_USAGE is not set/' .config
+sed -i 's/.*CONFIG_CHECKPOINT_RESTORE.*/CONFIG_CHECKPOINT_RESTORE=y/' .config
+sed -i 's/.*CONFIG_FANOTIFY.*/CONFIG_FANOTIFY=y/' .config
+sed -i 's/.*CONFIG_CRYPTO_USER_API_HASH.*/CONFIG_CRYPTO_USER_API_HASH=y/' .config
+sed -i 's/.*CONFIG_BPF_SYSCALL.*/CONFIG_BPF_SYSCALL=y/' .config
+echo "CONFIG_CGROUP_BPF=y" >> .config
+make -j10
+make modules_install
+make install
+dracut --kver $(ls -ls /usr/src/linux | cut -d'-' -f3-)
+#dracut --kver $(find /lib/modules/ -type d | sort -k1,1nr | tail -1 | sed 's/[^.0-9]*//g')
+
+cd /
+emerge dhcpcd bash-completion grub doas
+systemctl enable dhcpcd
+
+grub-install --target=x86_64-efi --efi-directory=/boot
+echo 'GRUB_DISTRIBUTOR="Gentoo"
+GRUB_TIMEOUT=1
+GRUB_CMDLINE_LINUX="net.ifnames=0 init=/usr/lib/systemd/systemd"' > /etc/default/grub
+grub-mkconfig -o /boot/grub/grub.cfg
+
+passwd
+
+exit
+cd
+umount -l /mnt/dev{/shm,/pts,}
+umount -R /mnt
+reboot
+
+echo "permit nopass keepenv :wheel" > /etc/doas.conf
+ln -sf /usr/bin/doas /usr/bin/sudo
+useradd -m -G users,wheel,video,audio,disk,usb,kvm -s /bin/bash yzarc
+passwd yzarc
+
+# Xorg stack
+
+emerge xorg-drivers xorg-server
+
+#Plasma5
+
+emerge sddm haveged qttranslations kde-apps/dolphin konsole kwin plasma-desktop plasma-workspace plasma-workspace-wallpapers plasma-pa pulseaudio powerdevil systemsettings vlc upower cronie cifs-utils unzip unrar kde-apps/ark picom
+systemctl enable sddm haveged upower
+echo 'export KWIN_TRIPLE_BUFFER=1
+export KWIN_USE_BUFFER_AGE=0
+export QT_IM_MODULE=xim
+export GTK_IM_MODULE=xim
+picom -b --unredir-if-possible --vsync --use-damage --glx-no-stencil -c --experimental-backends' > /etc/profile.d/kwin.sh
+chmod +x /etc/profile.d/kwin.sh
