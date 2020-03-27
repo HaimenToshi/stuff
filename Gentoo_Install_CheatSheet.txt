@@ -32,6 +32,8 @@ tmpfs                   /var/tmp/portage                  tmpfs           uid=po
 chroot /mnt/gentoo /bin/bash
 source /etc/profile
 export PS1="(chroot) ${PS1}"
+mkdir -p /var/tmp/portage
+chown -R portage:portage /var/tmp/portage
 mount /var/tmp/portage
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
