@@ -1,19 +1,17 @@
 cgdisk /dev/sda
+
+dd if=/dev/zero of=/dev/sda1 bs=1024k count=4
+dd if=/dev/zero of=/dev/sda2 bs=1024k count=4
 mkfs.vfat -F 32 -n EFI /dev/sda1
 mkfs.ext4 -L Root /dev/sda2
-mkfs.ext4 -L Home /dev/sda3
-mkdir /mnt/gentoo
 
+mkdir /mnt/gentoo
 mount /dev/sda2 /mnt/gentoo
 mkdir /mnt/gentoo/boot
-mkdir /mnt/gentoo/home
 mount /dev/sda1 /mnt/gentoo/boot
-mount /dev/sda3 /mnt/gentoo/home
-
 cd /mnt/gentoo/
 wget --recursive --no-parent https://linux.rz.ruhr-uni-bochum.de/download/gentoo-mirror/releases/amd64/autobuilds/current-stage3-amd64-systemd/ -e robots=off -R "index.html*" -R "*.CONTENTS" -R "*.asc" -R "*.DIGESTS" -nH --cut-dirs=10
 tar xpf stage3*.tar.* --xattrs-include='*.*' --numeric-owner
-
 
 mount --types proc /proc /mnt/gentoo/proc
 mount --rbind /sys /mnt/gentoo/sys
@@ -28,17 +26,16 @@ genfstab -L -p /mnt/gentoo > /mnt/gentoo/etc/fstab
 
 echo '#Portage TMPDIR in RAM
 tmpfs                   /var/tmp/portage                  tmpfs           uid=portage,gid=portage,mode=755,noatime,size=12G                    0 0' >> /mnt/gentoo/etc/fstab
-
+sed -ri 's#(/\s.*rw,relatime)\s#\1,discard #' /mnt/gentoo/etc/fstab
 chroot /mnt/gentoo /bin/bash
+
 source /etc/profile
 export PS1="(chroot) ${PS1}"
 mkdir -p /var/tmp/portage
 chown -R portage:portage /var/tmp/portage
 mount /var/tmp/portage
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
-
 rm -rf /etc/portage/package.use
-
 echo 'COMMON_FLAGS="-O2 -march=native -mtune=native -pipe"
 CFLAGS="${COMMON_FLAGS}"
 CXXFLAGS="${COMMON_FLAGS}"
@@ -61,7 +58,6 @@ VIDEO_CARDS="nouveau"
 INPUT_DEVICES="libinput"
 CPU_FLAGS_X86="aes avx avx2 f16c fma3 mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 ABI_X86="64 32"' > /etc/portage/make.conf
-
 echo 'sys-apps/util-linux static-libs
 app-admin/sudo -sendmail -ldap
 >=kde-apps/kio-extras-19.04.2 samba
@@ -104,7 +100,6 @@ media-libs/cogl gles2
 >=x11-libs/xapps-1.4.2 introspection
 >=kde-plasma/powerdevil-5.18.3 -wireless
 >=media-libs/libpng-1.6.37 apng' > /etc/portage/package.use
-
 echo '*/*  *' > /etc/portage/package.license
 
 emerge-webrsync
@@ -118,13 +113,14 @@ ar_SA.UTF-8 UTF-8' > /etc/locale.gen
 locale-gen
 eselect locale list
 eselect locale set ar_SA.utf8
-
 env-update && source /etc/profile && export PS1="(chroot) $PS1"
 
-emerge vanilla-sources dracut
+emerge vanilla-sources dracut --ask=n
 cd /usr/src/linux
+
 make menuconfig
 #PLEASE DON"T CHANGE ANYTHING OTHER THAN ACTIVATING YOUR STORAGE,VIDEO,SOUND,NETOWRK DRIVERS (NVME,VIRTIO..ETC) + FILESYSTEMS (EXT4, XFS..ETC) OTHERWISE YOUR KERNEL WILL NOT BOOT
+
 sed -i 's/.*CONFIG_USER_NS.*/CONFIG_USER_NS=y/' .config
 sed -i 's/.*CONFIG_DEBUG_STACK_USAGE.*/# CONFIG_DEBUG_STACK_USAGE is not set/' .config
 sed -i 's/.*CONFIG_CHECKPOINT_RESTORE.*/CONFIG_CHECKPOINT_RESTORE=y/' .config
@@ -132,13 +128,15 @@ sed -i 's/.*CONFIG_FANOTIFY.*/CONFIG_FANOTIFY=y/' .config
 sed -i 's/.*CONFIG_CRYPTO_USER_API_HASH.*/CONFIG_CRYPTO_USER_API_HASH=y/' .config
 sed -i 's/.*CONFIG_BPF_SYSCALL.*/CONFIG_BPF_SYSCALL=y/' .config
 echo "CONFIG_CGROUP_BPF=y" >> .config
+
 make -j10
+
 make -j10 modules_install
 make -j10 install
 dracut --kver $(ls -ls /usr/src/linux | cut -d'-' -f3-)
 
 cd /
-emerge dhcpcd bash-completion grub doas
+emerge dhcpcd bash-completion grub doas --ask=n
 systemctl enable dhcpcd
 
 grub-install --target=x86_64-efi --efi-directory=/boot
