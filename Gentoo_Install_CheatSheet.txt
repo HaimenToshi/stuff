@@ -3,7 +3,7 @@ cgdisk /dev/sda
 dd if=/dev/zero of=/dev/sda1 bs=1024k count=4
 dd if=/dev/zero of=/dev/sda2 bs=1024k count=4
 mkfs.vfat -F 32 -n EFI /dev/sda1
-mkfs.ext4 -L Root /dev/sda2
+mkfs.ext4 -L Root -E discard /dev/sda2
 
 mkdir /mnt/gentoo
 mount /dev/sda2 /mnt/gentoo
