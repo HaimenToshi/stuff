@@ -26,10 +26,13 @@ chmod 1777 /dev/shm
 
 genfstab -L -p /mnt/gentoo > /mnt/gentoo/etc/fstab
 
+echo '#Portage TMPDIR in RAM
+tmpfs                   /var/tmp/portage                  tmpfs           uid=portage,gid=portage,mode=755,noatime,size=12G                    0 0' >> /mnt/gentoo/etc/fstab
+
 chroot /mnt/gentoo /bin/bash
 source /etc/profile
 export PS1="(chroot) ${PS1}"
-
+mount /var/tmp/portage
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
 rm -rf /etc/portage/package.use
@@ -128,8 +131,8 @@ sed -i 's/.*CONFIG_CRYPTO_USER_API_HASH.*/CONFIG_CRYPTO_USER_API_HASH=y/' .confi
 sed -i 's/.*CONFIG_BPF_SYSCALL.*/CONFIG_BPF_SYSCALL=y/' .config
 echo "CONFIG_CGROUP_BPF=y" >> .config
 make -j10
-make modules_install
-make install
+make -j10 modules_install
+make -j10 install
 dracut --kver $(ls -ls /usr/src/linux | cut -d'-' -f3-)
 
 cd /
