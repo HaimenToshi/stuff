@@ -99,7 +99,8 @@ media-libs/cogl gles2
 >=app-crypt/pinentry-1.1.0-r3 -gnome-keyring
 >=x11-libs/xapps-1.4.2 introspection
 >=kde-plasma/powerdevil-5.18.3 -wireless
->=media-libs/libpng-1.6.37 apng' > /etc/portage/package.use
+>=media-libs/libpng-1.6.37 apng
+>=www-client/chromium-81.0.4044.69 -closure-compile optimize-webui pdf pulseaudio system-openjpeg vaapi widevine system-libvpx' > /etc/portage/package.use
 echo '*/*  *' > /etc/portage/package.license
 echo 'sys-devel/clang
 sys-devel/clang-common
