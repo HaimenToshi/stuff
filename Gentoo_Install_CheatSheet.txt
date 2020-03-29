@@ -3,7 +3,7 @@ cgdisk /dev/sda
 dd if=/dev/zero of=/dev/sda1 bs=1024k count=4
 dd if=/dev/zero of=/dev/sda2 bs=1024k count=4
 mkfs.vfat -F 32 -n EFI /dev/sda1
-mkfs.ext4 -L Root -E discard /dev/sda2
+mkfs.ext4 -L Root /dev/sda2
 
 mkdir /mnt/gentoo
 mount /dev/sda2 /mnt/gentoo
@@ -127,6 +127,27 @@ sed -i 's/.*CONFIG_CHECKPOINT_RESTORE.*/CONFIG_CHECKPOINT_RESTORE=y/' .config
 sed -i 's/.*CONFIG_FANOTIFY.*/CONFIG_FANOTIFY=y/' .config
 sed -i 's/.*CONFIG_CRYPTO_USER_API_HASH.*/CONFIG_CRYPTO_USER_API_HASH=y/' .config
 sed -i 's/.*CONFIG_BPF_SYSCALL.*/CONFIG_BPF_SYSCALL=y/' .config
+sed -i 's/.*CONFIG_CIFS.*/CONFIG_CIFS=y/' .config
+echo "CONFIG_CIFS_STATS2=y" >> .config
+echo "CONFIG_CIFS_UPCALL=y" >> .config
+echo "CONFIG_CIFS_XATTR=y" >> .config
+echo "CONFIG_CIFS_DFS_UPCALL=y" >> .config
+echo "CONFIG_CIFS_ROOT=y" >> .config
+echo "CONFIG_CIFS_ALLOW_INSECURE_LEGACY=n" >> .config
+sed -i 's/.*CONFIG_BRIDGE.*/CONFIG_BRIDGE=m/' .config
+sed -i 's/.*CONFIG_BRIDGE_IGMP_SNOOPING.*/CONFIG_BRIDGE_IGMP_SNOOPING=y/' .config
+sed -i 's/.*CONFIG_MACVLAN.*/CONFIG_MACVLAN=m/' .config
+echo "CONFIG_MACVTAP=m" >> .config
+sed -i 's/.*CONFIG_FUSE_FS.*/CONFIG_FUSE_FS=m/' .config
+sed -i 's/.*CONFIG_UDF_FS.*/CONFIG_UDF_FS=m/' .config
+sed -i 's/.*CONFIG_NTFS_FS.*/CONFIG_NTFS_FS=m/' .config
+sed -i 's/.*CONFIG_NTFS_RW.*/CONFIG_NTFS_RW=y/' .config
+sed -i 's/.*CONFIG_XFS_FS.*/CONFIG_XFS_FS=m/' .config
+sed -i 's/.*CONFIG_XFS_QUOTA.*/CONFIG_XFS_QUOTA=y/' .config
+sed -i 's/.*CONFIG_XFS_POSIX_ACL.*/CONFIG_XFS_POSIX_ACL=y/' .config
+sed -i 's/.*CONFIG_XFS_RT.*/CONFIG_XFS_RT=y/' .config
+sed -i 's/.*CONFIG_XFS_ONLINE_SCRUB.*/CONFIG_XFS_ONLINE_SCRUB=y/' .config
+sed -i 's/.*CONFIG_XFS_ONLINE_REPAIR.*/CONFIG_XFS_ONLINE_REPAIR=y/' .config
 echo "CONFIG_CGROUP_BPF=y" >> .config
 
 make -j10
@@ -147,6 +168,26 @@ grub-mkconfig -o /boot/grub/grub.cfg
 echo "Gentoo-$(date | base32 | cut -c 12-18)" > /etc/hostname
 passwd
 
+echo '[Unit]
+Description=Traditional *rc* Scripts Compatibility
+After=graphical.target
+
+[Service]
+Type=oneshot
+ExecStart=/etc/rc.local
+ExecStop=/etc/rc.shutdown
+TimeoutStartSec=0
+TimeoutStopSec=60
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target' > /etc/systemd/system/rc.service
+echo '#!/bin/bash' > /etc/rc.local
+echo '#!/bin/bash' > /etc/rc.shutdown
+chmod +x /etc/rc.local
+chmod +x /etc/rc.shutdown
+systemctl enable rc
+
 exit
 cd
 umount -l /mnt/dev{/shm,/pts,}
@@ -162,9 +203,22 @@ passwd yzarc
 
 emerge xorg-drivers xorg-server
 
+
+#Add Mozilla Beta Overlay
+
+mkdir /usr/overlays
+mkdir -p /etc/portage/repos.conf/
+echo '[mozilla]
+priority = 90
+location = /usr/overlays/mozilla/
+sync-type = git
+sync-uri = https://anongit.gentoo.org/git/proj/mozilla.git
+auto-sync = yes' >> /etc/portage/repos.conf/gentoo.conf
+emerge --sync --ask=n
+
 #Plasma5
 
-emerge sddm haveged qttranslations kde-apps/dolphin konsole kwin plasma-desktop plasma-workspace plasma-workspace-wallpapers plasma-pa pulseaudio powerdevil systemsettings vlc upower cronie cifs-utils unzip unrar kde-apps/ark picom
+emerge sddm haveged qttranslations kde-apps/dolphin konsole kwin plasma-desktop plasma-workspace plasma-workspace-wallpapers plasma-pa pulseaudio powerdevil systemsettings spectacle vlc upower cronie cifs-utils unzip unrar kde-apps/ark picom
 systemctl enable sddm haveged upower
 echo 'export KWIN_TRIPLE_BUFFER=1
 export KWIN_USE_BUFFER_AGE=0
