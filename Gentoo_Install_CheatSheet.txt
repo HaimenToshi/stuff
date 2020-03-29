@@ -1,3 +1,4 @@
+
 cgdisk /dev/sda
 
 dd if=/dev/zero of=/dev/sda1 bs=1024k count=4
@@ -50,7 +51,7 @@ PKGDIR="/usr/portage/packages"
 LC_MESSAGES=C
 L10N="ar"
 LINGUAS="ar"
-USE="custom-cflags custom-optimization systemd udev dbus bash-completion X wayland -clang -llvm -man -docs -doc -handbook"
+USE="custom-cflags custom-optimization systemd udev dbus bash-completion X wayland -man -docs -doc -handbook"
 MAKEOPTS="-j10"
 EMERGE_DEFAULT_OPTS="--ask --alert --verbose --jobs 6 --quiet-build"
 ACCEPT_KEYWORDS="~amd64"
@@ -99,14 +100,9 @@ media-libs/cogl gles2
 >=app-crypt/pinentry-1.1.0-r3 -gnome-keyring
 >=x11-libs/xapps-1.4.2 introspection
 >=kde-plasma/powerdevil-5.18.3 -wireless
->=media-libs/libpng-1.6.37 apng
->=www-client/chromium-81.0.4044.69 -closure-compile optimize-webui pdf pulseaudio system-openjpeg vaapi widevine system-libvpx' > /etc/portage/package.use
+>=media-libs/libpng-1.6.37 apng' > /etc/portage/package.use
 echo '*/*  *' > /etc/portage/package.license
-echo 'sys-devel/clang
-sys-devel/clang-common
-sys-devel/llvm
-sys-devel/llvm-common
-sys-devel/clang-runtime' > /etc/portage/package.mask
+
 emerge-webrsync
 emerge --sync --quiet --ask=n
 emerge --verbose --update --deep --newuse @world
@@ -237,3 +233,27 @@ export KWIN_USE_BUFFER_AGE=0
 export QT_IM_MODULE=xim
 export GTK_IM_MODULE=xim' > /etc/profile.d/kwin.sh
 chmod +x /etc/profile.d/kwin.sh
+
+
+#FireFox RTL Window controls Fix (You need to lunch AND CLOSE Firefox at least ONCE BEFORE applying this fix):
+
+mkdir .mozilla/firefox/$(cat "$HOME/.mozilla/firefox/profiles.ini" | sed -n -e 's/^.*Path=//p' | head -n 1)/chrome/
+echo '#TabsToolbar {
+  direction: ltr;
+}
+#tabbrowser-tabs {
+  direction: rtl;
+}
+.titlebar-buttonbox {
+  display: flex;
+}
+.titlebar-min {
+  order: 3;
+}
+.titlebar-max {
+  order: 2;
+}
+.titlebar-close {
+  order: 1;
+}' > .mozilla/firefox/$(cat "$HOME/.mozilla/firefox/profiles.ini" | sed -n -e 's/^.*Path=//p' | head -n 1)/chrome/userChrome.css
+echo 'user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);' > .mozilla/firefox/$(cat "$HOME/.mozilla/firefox/profiles.ini" | sed -n -e 's/^.*Path=//p' | head -n 1)/user.js
