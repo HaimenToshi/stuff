@@ -51,7 +51,7 @@ PKGDIR="/usr/portage/packages"
 LC_MESSAGES=C
 L10N="ar"
 LINGUAS="ar"
-USE="custom-cflags custom-optimization systemd udev dbus bash-completion X wayland -man -docs -doc -handbook"
+USE="custom-cflags custom-optimization systemd dbus udev bash-completion X vdpau wayland -man -docs -doc -handbook"
 MAKEOPTS="-j10"
 EMERGE_DEFAULT_OPTS="--ask --alert --verbose --jobs 6 --quiet-build"
 ACCEPT_KEYWORDS="~amd64"
@@ -77,12 +77,11 @@ media-libs/libcanberra alsa
 >=dev-qt/qtcore-5.12.4 icu
 >=media-plugins/alsa-plugins-1.1.9-r1 pulseaudio
 >=dev-qt/qtgui-5.14.0 jpeg dbus egl
->=dev-qt/qtgui-5.14.0 jpeg dbus
 >=sys-apps/dbus-1.12.16 user-session
 >=x11-misc/picom-7.5-r1 opengl
 >=media-video/ffmpeg-4.1.3 gme modplug opus speex wavpack
 >=www-client/w3m-0.5.3_p20190105 imlib
->=media-libs/freetype-2.10.1 -harfbuzz
+>=media-libs/freetype-2.10.1 harfbuzz
 >=kde-apps/gwenview-19.04.2:5 raw
 >=kde-apps/ark-19.04.2:5  bzip2 -handbook lzma zip
 >=dev-db/sqlite-3.28.0 secure-delete
@@ -90,17 +89,20 @@ media-libs/libcanberra alsa
 >=x11-libs/gtk+-3.24.10 wayland
 media-libs/libvpx postproc
 www-client/firefox hwaccel custom-cflags custom-optimization wayland pulseaudio
-media-libs/libsdl2 gles
 app-emulation/qemu usbredir virgl spice
 >=net-misc/spice-gtk-0.37-r2 usbredir
 >=sys-libs/ncurses-6.1_p20190609 -gpm
->=media-libs/clutter-1.10 egl
-media-libs/cogl gles2
 >=media-libs/libmatemixer-1.22.0 pulseaudio
 >=app-crypt/pinentry-1.1.0-r3 -gnome-keyring
 >=x11-libs/xapps-1.4.2 introspection
 >=kde-plasma/powerdevil-5.18.3 -wireless
->=media-libs/libpng-1.6.37 apng' > /etc/portage/package.use
+>=media-libs/libpng-1.6.37 apng
+x11-drivers/nvidia-drivers tools
+>=dev-libs/libxml2-2.9.9-r3 icu
+>=media-libs/harfbuzz-2.6.4 icu
+>=media-libs/libvpx-1.8.2 svc
+>=net-libs/nodejs-13.12.0 inspector icu
+>=kde-apps/spectacle-19.12.3 share' > /etc/portage/package.use
 echo '*/*  *' > /etc/portage/package.license
 
 emerge-webrsync
@@ -236,7 +238,7 @@ chmod +x /etc/profile.d/kwin.sh
 
 
 #FireFox RTL Window controls Fix (You need to lunch AND CLOSE Firefox at least ONCE BEFORE applying this fix):
-
+cd ~
 mkdir .mozilla/firefox/$(cat "$HOME/.mozilla/firefox/profiles.ini" | sed -n -e 's/^.*Path=//p' | head -n 1)/chrome/
 echo '#TabsToolbar {
   direction: ltr;
@@ -257,3 +259,4 @@ echo '#TabsToolbar {
   order: 1;
 }' > .mozilla/firefox/$(cat "$HOME/.mozilla/firefox/profiles.ini" | sed -n -e 's/^.*Path=//p' | head -n 1)/chrome/userChrome.css
 echo 'user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);' > .mozilla/firefox/$(cat "$HOME/.mozilla/firefox/profiles.ini" | sed -n -e 's/^.*Path=//p' | head -n 1)/user.js
+echo 'user_pref("dom.ipc.processCount", 10);' >> .mozilla/firefox/$(cat "$HOME/.mozilla/firefox/profiles.ini" | sed -n -e 's/^.*Path=//p' | head -n 1)/user.js
